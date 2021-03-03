@@ -7,6 +7,7 @@ import shutil
 from tkinter import *
 from exif import Image
 from tkinter import filedialog
+from tkinter import scrolledtext 
 #
 ########################################################################
 #
@@ -27,7 +28,7 @@ def extension(x):
     return (ext[1])
 
 def isPicture(lname):
-    extList = ['jpg', 'NEF', 'png', 'ARW','JPG','gif','jpeg']
+    extList = ['jpg', 'JPG','jpeg']
     for i in extList:
        if extension(lname) == i:
           return True
@@ -35,72 +36,83 @@ def isPicture(lname):
 def findSource():
     img_dir = filedialog.askdirectory()
     dirName.set(img_dir)
-    os.chdir(img_dir) 
+    os.chdir(img_dir)
+   
     
 def findDestRoot():
     img_dir = filedialog.askdirectory()
     destName.set(img_dir)
+   
 
 def process():
     if getOS() == "posix":
         slash = "/"
-        home = "/home/david/Pictures"
     else:
         slash = "\\"
-        home = "C:\\Users\\user\\Pictures"
 
     print(getOS())
-    #
-    ## ensure that the directory structure is in place
-    #
+    src = srcDirText.get()
+    dest = destDirText.get()
+    print (src)
     dayDir = ''
-    for file in os.listdir(home):
-        fname = home + slash + file
+    #
+    #  iterate over all files in the source directory
+    #
+    for file in os.listdir(src):
+        fname = src + slash + file
+    #
+    #  if it is not a directory and is a picturefile ...
+    #
         if os.path.isfile(fname):
             if isPicture(file):
                 my_image = Image(fname)
                 print(my_image.datetime_original)
-                yearDir = home + slash + (getYear(my_image.datetime_original))
+    #
+    #  determine what the names of the destination directories should be
+    #
+                yearDir = dest + slash + (getYear(my_image.datetime_original))
                 monthDir = yearDir + slash + (getMonth(my_image.datetime_original))
                 dayDir = monthDir + slash + (getDay(my_image.datetime_original))
-
+    #
+    #  check to see if the year/month/day directories exist and create them if not
+    #
+                isYear = os.path.isdir(yearDir)            
+                if isYear:
+                    pass
+                else:
+                    textArea.insert('insert','Creating ' + yearDir + '\n')
+                    os.mkdir(yearDir)
+                    
+                isMonth = os.path.isdir(monthDir)    
+                if isMonth:
+                    pass
+                else:
+                    textArea.insert('insert','Creating ' + monthDir + '\n')
+                    os.mkdir(monthDir)
+                   
                 isDay = os.path.isdir(dayDir)
                 if isDay:
-                    pass   
+                    pass
                 else:
-                    isMonth = os.path.isdir(monthDir)
-                    if isMonth:
-                        pass
-                    else:
-                        isYear = os.path.isdir(yearDir)
-                        if isYear:
-                            pass
-                        else:
-                            print("Creating " + yearDir)
-                            os.mkdir(yearDir)
-
-                        print("Creating " + monthDir)
-                        os.mkdir(monthDir)
-
-                    print("Creating " + dayDir)
+                    textArea.insert('insert','Creating ' + dayDir + '\n')
                     os.mkdir(dayDir)
     #
-    #  don't copy the fole if it exists already
+    #  don't copy the file if it exists already
     #
-            destfile = dayDir + slash + file
-            if os.path.isfile(destfile):
-                print('skipping')
-            else:
-                shutil.copyfile(fname,destfile)
-
-
+                destfile = dayDir + slash + file
+                print (destfile)
+                if os.path.isfile(destfile):
+                    print('skipping')
+                else:
+                    shutil.copyfile(fname,destfile)
+                    textArea.insert('insert','Copying ' +  destfile + '\n')
 ###############################################################################
 #
 # Create the root window
 #
 window = Tk()
 window.title('Photo Organizer')
-window.geometry("500x500")
+window.geometry("500x700")
 window.config(background = "white")
 #  
 # screen element definition
@@ -112,6 +124,7 @@ dirName = StringVar()
 srcDirText = Entry(window, width = 50, textvariable = dirName)
 destName = StringVar()
 destDirText = Entry(window, width = 50, textvariable = destName)
+textArea = scrolledtext.ScrolledText(window, width = 70, height = 10,font = ("Helvetica",8)) 
 button_copy = Button(window, text = "Copy",command = process) 
 button_exit = Button(window, text = "Exit",command = exit) 
 #  
@@ -120,10 +133,12 @@ button_exit = Button(window, text = "Exit",command = exit)
 label_file_explorer.place(x = 50, y = 20)
 button_src.place(x=150,y=150)
 srcDirText.place(x=50,y=200)
+
 button_dest.place(x=135, y=250)
 destDirText.place(x=50,y=300)
-button_copy.place(x=300,y=400)  
-button_exit.place(x=400,y=400)
+textArea.place(x=50,y=350)
+button_copy.place(x=300,y=600)  
+button_exit.place(x=400,y=600)
 #
 # Let the window wait for any events
 #
