@@ -50,10 +50,9 @@ def process():
     else:
         slash = "\\"
 
-    print(getOS())
+
     src = srcDirText.get()
     dest = destDirText.get()
-    print (src)
     dayDir = ''
     #
     #  iterate over all files in the source directory
@@ -102,7 +101,7 @@ def process():
                 destfile = dayDir + slash + file
                 print (destfile)
                 if os.path.isfile(destfile):
-                    print('skipping')
+                     textArea.insert('insert','Skipping ' +  destfile + '\n')
                 else:
                     shutil.copyfile(fname,destfile)
                     textArea.insert('insert','Copying ' +  destfile + '\n')
