@@ -129,19 +129,16 @@ destName = StringVar()
 destDirText = Entry(window, width = 50, textvariable = destName)
 textArea = scrolledtext.ScrolledText(window, width = 70, height = 15,font = ("Helvetica",8)) 
 button_copy = Button(window, text = "Copy",command = process) 
-button_exit = Button(window, text = "Exit",command = exit) 
 #  
 # place screen elements
 #
 label_file_explorer.place(x = 50, y = 20)
 button_src.place(x=150,y=150)
 srcDirText.place(x=50,y=200)
-
 button_dest.place(x=135, y=250)
 destDirText.place(x=50,y=300)
 textArea.place(x=50,y=350)
 button_copy.place(x=300,y=600)  
-button_exit.place(x=400,y=600)
 #
 # Let the window wait for any events
 #
