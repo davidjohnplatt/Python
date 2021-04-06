@@ -18,26 +18,26 @@ def findSource():
     img_dir = filedialog.askdirectory()
     dirName.set(img_dir)
     os.chdir(img_dir)
-   
-    
+      
 def findDestRoot():
     img_dir = filedialog.askdirectory()
     destName.set(img_dir)
-    
-def sel():
-    selection = "You selected the option " + str(var.get())
-    label.config(text = selection)
-    
-def process():
-    sourceDir = '/home/david/Pictures'
+       
+def process():   
+    sourceDir = srcDirText.get()
+    targetDir = destDirText.get()
     lenSource = len(sourceDir)
-    targetDir = '/home/david/Gdrive/Pictures'
-    copyFile = False
+       
+    if (var.get() == 1):
+        copyFile = True
+    else:
+        copyFile = False
 
     logFile = open('logFile.txt' , 'w')
                     
     for dirName, subdirList, fileList in os.walk(sourceDir):
-        print('Found directory: %s' % dirName)
+        print('Found directory: %s' % dirName)       
+        textArea.insert('insert','Directory: ' + dirName + '\n')
         logFile.write('Found directory: %s\n' % dirName)
         newDir = targetDir + dirName[lenSource:]
     #
@@ -58,9 +58,11 @@ def process():
                 pass
             else:
                 if (copyFile):
+                    textArea.insert('insert','\tCopying: ' + srcFile + '\n')
                     logFile.write('\tCopying %s to %s \n' % (srcFile,  destfile))
                     shutil.copyfile(srcFile,destfile)
                 else:
+                    textArea.insert('insert','\tTesting: ' + srcFile + '\n')
                     logFile.write('\tTest mode %s to %s \n' % (srcFile,  destfile))
     print('End Process')               
     logFile.close()                  
@@ -73,7 +75,7 @@ window = Tk()
 window.title('CopyTree')
 window.geometry("500x700")
 window.config(background = "white")
-var = 1
+var = IntVar()
 #  
 # screen element definition
 #
@@ -85,8 +87,8 @@ srcDirText = Entry(window, width = 50, textvariable = dirName)
 destName = StringVar()
 destDirText = Entry(window, width = 50, textvariable = destName)
 textArea = scrolledtext.ScrolledText(window, width = 70, height = 15,font = ("Helvetica",8))
-R1 = Radiobutton(window, text="Live", variable=var, value=1,command=sel)
-R2 = Radiobutton(window, text="Test", variable=var, value=2,command=sel)
+R1 = Radiobutton(window, text="Live", variable=var, value=1, indicator = 1)
+R2 = Radiobutton(window, text="Test", variable=var, value=2, indicator = 1)
 button_copy = Button(window, text = "Copy",command = process) 
 #  
 # place screen elements
