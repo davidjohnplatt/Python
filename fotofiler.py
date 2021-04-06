@@ -30,13 +30,15 @@ def extension(x):
 def isPicture(lname):
     extList = ['jpg', 'JPG','jpeg','ARW','NEF']
     for i in extList:
-       if extension(lname) == i:
-          return True
+        if extension(lname) == i:
+            return True
+        else:
+            return False
 
 def findSource():
     img_dir = filedialog.askdirectory()
     dirName.set(img_dir)
-    os.chdir(img_dir)
+    os.chdir(str(img_dir))
    
     
 def findDestRoot():
@@ -101,7 +103,7 @@ def process():
     #
                 destfile = dayDir + slash + file
                 if os.path.isfile(destfile):
-                     textArea.insert('insert','Skipping ' +  destfile + '\n')
+                    textArea.insert('insert','Skipping ' +  destfile + '\n')
                 else:
                     shutil.copyfile(fname,destfile)
                     textArea.insert('insert','Copying ' +  destfile + '\n')
