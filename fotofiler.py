@@ -30,10 +30,10 @@ def extension(x):
 def isPicture(lname):
     extList = ['jpg', 'JPG','jpeg','ARW','NEF']
     for i in extList:
-        if extension(lname) == i:
+        if extension(lname) == i:          
             return True
-        else:
-            return False
+    return False   
+            
 
 def findSource():
     img_dir = filedialog.askdirectory()
@@ -64,7 +64,7 @@ def process():
     #
     #  if it is not a directory and is a picturefile ...
     #
-        if os.path.isfile(fname):
+        if os.path.isfile(fname):          
             if isPicture(file):
                 f = open(file, 'rb')
                 tags = exifread.process_file(f)
